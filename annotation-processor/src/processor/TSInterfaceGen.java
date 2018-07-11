@@ -23,9 +23,6 @@ import java.util.Set;
 
 public class TSInterfaceGen extends AbstractProcessor {
 
-    private Types typeUtils;
-    private Elements elementUtils;
-    private Filer filer;
     private Messager messager;
     private List<AnnotatedClass> annotatedClasses;
     private TSCodeGenerator codeGenerator;
@@ -33,9 +30,6 @@ public class TSInterfaceGen extends AbstractProcessor {
     @Override
     public synchronized void init(ProcessingEnvironment processingEnv) {
         super.init(processingEnv);
-        typeUtils = processingEnv.getTypeUtils();
-        elementUtils = processingEnv.getElementUtils();
-        filer = processingEnv.getFiler();
         messager = processingEnv.getMessager();
         annotatedClasses = new ArrayList<>();
         codeGenerator = new TSCodeGenerator();
