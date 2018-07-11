@@ -68,12 +68,12 @@ public class TSInterfaceGen extends AbstractProcessor {
         }
         try {
             //TODO - СОХРАНЯЕТ ХРЕН ЗНАЕТ ГДЕ
+            //messager.printMessage(Diagnostic.Kind.WARNING, System.getProperty("user.dir"));
             File path = new File("TSInterfaces");
             messager.printMessage(Diagnostic.Kind.WARNING, "Output files are saved in: " + path.getAbsolutePath());
             for (AnnotatedClass annotatedClass : annotatedClasses) {
                 File file = new File(path.getPath() + "/" + annotatedClass.getName() + ".ts");
-                if (!file.createNewFile()) messager.printMessage(Diagnostic.Kind.ERROR, "Cannot create file:" +
-                        annotatedClass.getName() + ".ts");
+                file.createNewFile();
                 Writer writer = new FileWriter(file);
                 writer.write(codeGenerator.generate(annotatedClass));
                 writer.close();
