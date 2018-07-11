@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -67,10 +68,15 @@ public class TSInterfaceGen extends AbstractProcessor {
             }
         }
         try {
-            //TODO - СОХРАНЯЕТ ХРЕН ЗНАЕТ ГДЕ
-            //messager.printMessage(Diagnostic.Kind.WARNING, System.getProperty("user.dir"));
-            File path = new File("TSInterfaces");
-            messager.printMessage(Diagnostic.Kind.WARNING, "Output files are saved in: " + path.getAbsolutePath());
+            File path;
+            //get normal output path
+            URL url = getClass().getClassLoader().getResource(".");
+            if (url != null) path = new File(url.getPath() + "TSInterfaces");
+            else {
+                messager.printMessage(Diagnostic.Kind.ERROR, "Cannot get a path from the classLoader");
+                return true;
+            }
+            path.mkdir();
             for (AnnotatedClass annotatedClass : annotatedClasses) {
                 File file = new File(path.getPath() + "/" + annotatedClass.getName() + ".ts");
                 file.createNewFile();
