@@ -18,14 +18,6 @@
         <google.auto-service.version>1.0-rc4</google.auto-service.version>
     </properties>
 
-    <dependencies>
-        <dependency>
-            <groupId>com.google.auto.service</groupId>
-            <artifactId>auto-service</artifactId>
-            <version>${google.auto-service.version}</version>
-        </dependency>
-    </dependencies>
-
     <build>
         <sourceDirectory>src</sourceDirectory>
         <outputDirectory>target</outputDirectory>
