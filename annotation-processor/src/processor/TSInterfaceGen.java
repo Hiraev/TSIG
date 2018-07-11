@@ -82,7 +82,7 @@ public class TSInterfaceGen extends AbstractProcessor {
             messager.printMessage(Diagnostic.Kind.ERROR, "Can't create new TypeScript file");
         }
         //DEBUG
-        messager.printMessage(Diagnostic.Kind.NOTE, "Process have been finished");
+        messager.printMessage(Diagnostic.Kind.NOTE, "Process has been finished");
         return false;
     }
 }
