@@ -2,7 +2,6 @@ package processor;
 
 import annotations.TSIgnore;
 import annotations.TSInterface;
-import com.google.auto.service.AutoService;
 
 import javax.annotation.processing.*;
 import javax.lang.model.SourceVersion;
@@ -21,7 +20,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-@AutoService(Processor.class)
 public class TSInterfaceGen extends AbstractProcessor {
 
     private Types typeUtils;
