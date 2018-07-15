@@ -1,0 +1,51 @@
+== TypeScript Interface Generator
+
+Данная программа умеет генерировать `TypeScript` интерфейсы на основе классов `Java`, помеченных специальной аннотацией. 
+В данный момент есть поддержка всех примитивных типов и типов оберток, а также типов `Map`, `Set`, `List`, `Queue` и некоторых их полных
+или частичных реализаций из стандрартной библиотеки, при этом для остальных - неизвестных типов задается тип `Object`.
+
+Для генерации `TypeScript` интерфейса необходимо пометить класс аннотацией `TSInterface`, аннотация может принимать 
+список с модификаторами доступа, которые показывают какие поля включать в интерфейс. Имеются 4 типа модификаторов 
+доступа: __PRIVATE__, __PUBLIC__, __PROTECTED__, __NO__. Последний отвечает отсутсвию модификатора доступа (__package-private__). По умолчанию
+используется только __PUBLIC__. Чтобы программа проигнорировала, какое-то конкретное поле, ее необходимо пометить 
+аннотацией `TSIgnore`.
+
+Программа является `annotation processor`(-ом), поэтому для ее работы необходимо включить `Annotation processor` в настройках 
+среды разработки.
+
+== Пример работы программы
+
+Класс на Java:
+[source, java]
+----
+@TSInterface(accessLevel = {
+        TSInterface.AccessLevel.PRIVATE,
+        TSInterface.AccessLevel.PUBLIC,
+        TSInterface.AccessLevel.NO})
+class Person {
+    public String surname;
+    private String name;
+    public int numbers[];
+    public int[] keys;
+    @TSIgnore
+    public boolean isMarried;
+    public Map<String, String> map;
+    public Map<List<Map<Integer, Float>>, Set<String[][]>> veryBigType[];
+    @TSIgnore
+    int height;
+}
+----
+
+Сгенерированный TypeScript интерфейс:
+
+[source, typescript]
+----
+interface Person {
+	surname: string;
+	name: string;
+	numbers: number[];
+	keys: number[];
+	map: Map<string, string>;
+	veryBigType: Map<Array<Map<number, number>>, Set<string[][]>>[];
+}
+----
