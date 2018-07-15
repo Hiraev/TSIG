@@ -44,7 +44,7 @@ public class TSCodeGenerator {
         } else if (type.matches(".+>")) { //Is it a generic type?
             return checkGeneric(type);
         }
-        return checkObject(type);
+        return checkObject(type, true);
     }
 
     private String checkArray(String type) {
@@ -70,18 +70,18 @@ public class TSCodeGenerator {
             case "long":
             case "double":
 
-            case "Byte":
-            case "Short":
-            case "Integer":
-            case "Float":
-            case "Long":
-            case "Double":
+            case "java.lang.Byte":
+            case "java.lang.Short":
+            case "java.lang.Integer":
+            case "java.lang.Float":
+            case "java.lang.Long":
+            case "java.lang.Double":
                 return "number";
             case "char":
-            case "Character":
+            case "java.lang.Character":
                 return "string";
             case "boolean":
-            case "Boolean":
+            case "java.lang.Boolean":
                 return "boolean";
         }
         return null;
@@ -89,7 +89,7 @@ public class TSCodeGenerator {
 
     private String checkGeneric(String type) {
         final int firstScope = type.indexOf('<');
-        final String basicType = checkObject(type.substring(0, firstScope));
+        final String basicType = checkObject(type.substring(0, firstScope), false);
         if ("Object".equals(basicType)) return basicType;
         StringBuilder innerTypes = new StringBuilder();
         final String generic = type.substring(firstScope + 1, type.length() - 1);
@@ -116,11 +116,18 @@ public class TSCodeGenerator {
 
     }
 
-    private String checkObject(String type) {
-        if (String.class.getCanonicalName().equals(type)) return "String";
-        else if (toArrayTypes.contains(type)) return "Array";
-        else if (toMapTypes.contains(type)) return "Map";
-        else if (toSetTypes.contains(type)) return "Set";
+    private String checkObject(String type, boolean empty) {
+        if (String.class.getCanonicalName().equals(type)) return "string";
+        else if (toArrayTypes.contains(type)) {
+            if (empty) return "Array<Object>";
+            else return "Array";
+        } else if (toMapTypes.contains(type)) {
+            if (empty) return "Map<Object, Object>";
+            else return "Map";
+        } else if (toSetTypes.contains(type)) {
+            if (empty) return "Set<Object>";
+            else return "Set";
+        }
         else return "Object";
     }
 }
