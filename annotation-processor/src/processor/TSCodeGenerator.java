@@ -1,11 +1,22 @@
 package processor;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Queue;
-import java.util.Set;
+import java.util.*;
 
 public class TSCodeGenerator {
+    private final List<String> toArrayTypes = Arrays.asList(List.class.getCanonicalName(),
+            ArrayList.class.getCanonicalName(), AbstractList.class.getCanonicalName(),
+            AbstractSequentialList.class.getCanonicalName(), Queue.class.getCanonicalName(),
+            Deque.class.getCanonicalName(), AbstractQueue.class.getCanonicalName(),
+            LinkedList.class.getCanonicalName(), PriorityQueue.class.getCanonicalName(),
+            Vector.class.getCanonicalName(), Stack.class.getCanonicalName());
+    private final List<String> toSetTypes = Arrays.asList(Set.class.getCanonicalName(),
+            AbstractSet.class.getCanonicalName(), SortedSet.class.getCanonicalName(),
+            HashSet.class.getCanonicalName(),
+            NavigableSet.class.getCanonicalName(), TreeSet.class.getCanonicalName());
+    private final List<String> toMapTypes = Arrays.asList(Map.class.getCanonicalName(),
+            HashMap.class.getCanonicalName(), TreeMap.class.getCanonicalName(),
+            NavigableMap.class.getCanonicalName(), LinkedHashMap.class.getCanonicalName(),
+            Hashtable.class.getCanonicalName(), Properties.class.getCanonicalName());
 
     public String generate(AnnotatedClass annotatedClass) {
         StringBuilder builder = new StringBuilder();
@@ -82,21 +93,34 @@ public class TSCodeGenerator {
         if ("Object".equals(basicType)) return basicType;
         StringBuilder innerTypes = new StringBuilder();
         final String generic = type.substring(firstScope + 1, type.length() - 1);
-        final String[] genericTypes = generic.split(",");
-        final int lastIndex = genericTypes.length - 1;
-        for (int i = 0; i < genericTypes.length; i++) {
-            innerTypes.append(checkType(genericTypes[i].trim()));
+        List<String> genericTypes = new ArrayList<>();
+        int triangleScopes = 0;
+        int start = 0;
+        int end = 0;
+        for (char c : generic.toCharArray()) {
+            if (c == '<') triangleScopes++;
+            else if (c == '>') triangleScopes--;
+            if (c == ',' && triangleScopes == 0) {
+                genericTypes.add(generic.substring(start, end));
+                start = end + 1;
+            }
+            end++;
+        }
+        genericTypes.add(generic.substring(start, end));
+        final int lastIndex = genericTypes.size() - 1;
+        for (int i = 0; i < genericTypes.size(); i++) {
+            innerTypes.append(checkType(genericTypes.get(i).trim()));
             if (i != lastIndex) innerTypes.append(", ");
         }
         return basicType + "<" + innerTypes.toString() + ">";
+
     }
 
     private String checkObject(String type) {
         if (String.class.getCanonicalName().equals(type)) return "String";
-        else if (List.class.getCanonicalName().equals(type) ||
-                Queue.class.getCanonicalName().equals(type)) return "Array";
-        else if (Map.class.getCanonicalName().equals(type)) return "Map";
-        else if (Set.class.getCanonicalName().equals(type)) return "Set";
+        else if (toArrayTypes.contains(type)) return "Array";
+        else if (toMapTypes.contains(type)) return "Map";
+        else if (toSetTypes.contains(type)) return "Set";
         else return "Object";
     }
 }
